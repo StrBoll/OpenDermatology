@@ -14,7 +14,7 @@ find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Add the executable
-add_executable(OpenDerm experiment.cpp)
+add_executable(OpenDerm Input.cpp)
 
 # Link OpenCV libraries
 target_link_libraries(OpenDerm ${OpenCV_LIBS})
