@@ -24,6 +24,8 @@ bool insertImageDB(const char *image_binary, const char* file_name, int ufid){
             return true;
 
 
+        } else {
+            cout << "Couldn\'t connect to database, insertImageDB();"
         }
     }
     catch (const exception &e){
@@ -38,6 +40,7 @@ bool insertUserDB(int ufid, string first_name, string last_name){
     try {
         connection C("dbname=submissions user=your_local_user password='your_local_password' host=localhost port=5432");
 
+        if (C.is_open()){
         Work W(C);
 
         string command = "INSERT INTO user_submitted (UFID, LastName, FirstName) VALUES ($1, $2, $3);";
@@ -48,8 +51,11 @@ bool insertUserDB(int ufid, string first_name, string last_name){
         cout << "User submitted to database" << endl;
         return true;
 
-    }
-    catch (const exception &e){
+        } else {
+            cout << "Couldn\'t connect to database, insertUserDB();";
+        }          
+    
+    } catch (const exception &e){
         cerr << e.what() << endl;
         return false;
     }
