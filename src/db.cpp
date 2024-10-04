@@ -37,7 +37,14 @@ bool insertUserDB(int ufid, string first_name, string last_name){
     try {
         connection C("dbname=submits_database user=your_local_user password='your_local_password' host=localhost port=5432");
 
+        Work W(C);
 
+        string command = "INSERT INTO user_submitted (UFID, LastName, FirstName) VALUES " + ufid + ", " + last_name + ", " + first_name + ";";
+
+        W.exec(command);
+        W.commit();
+
+        return true;
 
     }
     catch (const exception &e){
