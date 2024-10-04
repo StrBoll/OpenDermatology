@@ -3,8 +3,9 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <iostream>
-#include <sys/stat.h>  // For creating the directory
-#include <sstream>     // For generating filenames with a counter
+#include <sys/stat.h>  
+#include <sstream>     
+#include "db.h"
 
 using namespace cv;
 using namespace std;
@@ -46,7 +47,7 @@ void normalizeImage(Mat& image) {
 }
 
 int main() {
-    string path = "../images/the.jpg";
+    string path = "images/the.jpg";
     Mat img1 = imread(path);
     
     if (img1.empty()) {
@@ -98,9 +99,29 @@ int main() {
 
     // Save the processed image with the unique filename
     imwrite(filename.str(), gray);
+
+
+    // ----------------------------------------------------------------------------------------
+
+        // Need to get UFID, but this is just for proof of concept:
+
+        vector<uchar> buffer;
+        imencode(".jpg", gray, buffer); 
+        const char* image_binary = reinterpret_cast<const char*>(buffer.data());
+        size_t image_size = buffer.size();
+
+
+        insertImageDB(image_binary, image_size, filename.str());
+    
+
+
+
+    // ----------------------------------------------------------------------------------------
+
+
     cout << "Image saved as " << filename.str() << endl;
 
-    counter++;  // Increment the counter for the next run
+    counter++;  
 
     waitKey(0);
 

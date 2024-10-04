@@ -7,7 +7,7 @@ CREATE TABLE user_submitted(
 CREATE TABLE images_submitted(
     id SERIAL PRIMARY KEY,
     image_data BYTEA,
-    file_name varchar(255),
+    file_name VARCHAR(255),
     UFID INT,
     FOREIGN KEY (UFID) REFERENCES user_submitted(UFID)
 );
