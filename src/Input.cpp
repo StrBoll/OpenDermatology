@@ -86,8 +86,8 @@ int main() {
 
     // Create the 'processed' folder if it doesn't exist
     struct stat info;
-    if (stat("../processed", &info) != 0) {
-        mkdir("../processed", 0777);  // Creates folder with read/write/execute permissions
+    if (stat("/processed", &info) != 0) {
+        mkdir("/processed", 0777);  // Creates folder with read/write/execute permissions
     }
 
     // Add a counter for the filenames
@@ -95,7 +95,7 @@ int main() {
 
     // Generate a unique filename
     std::ostringstream filename;
-    filename << "../processed/output_" << counter << ".jpg";
+    filename << "processed/output_" << counter << ".jpg";
 
     // Save the processed image with the unique filename
     imwrite(filename.str(), gray);
