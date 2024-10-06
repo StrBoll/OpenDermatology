@@ -1,5 +1,5 @@
 CREATE TABLE (
-    account_number INTEGER PRIMARY KEY,
+    account_number INT PRIMARY KEY,
     username_ VARCHAR(255),
     password_ VARCHAR(255),
     creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
