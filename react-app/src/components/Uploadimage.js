@@ -6,8 +6,8 @@ const Image = () => {
   return (
     <div>
      
-      <h1>Upload and Display Image</h1>
-      <h3>using React Hooks</h3>
+      <h1>Submit images of your skin condition</h1>
+      <h3>Displays image back to user</h3>
 
     
       {selectedImage && (
