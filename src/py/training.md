@@ -19,7 +19,6 @@ By: Phillip Boll
 #kernel_size represents the size of the filter or kernel (names are interchangeable)
 # The filter is slid over the input image
 # kernels are defined in square-like parameters so if a kernel is a size 3 then its a 3 x 3 filter
-
 # A 3 x 3 kernel will look through a 3 x 3 section of pixels on each iteration during training. 
 
 
