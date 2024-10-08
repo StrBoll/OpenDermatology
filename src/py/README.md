@@ -1,5 +1,8 @@
 #Defining a 2 Dimensional Convolutional Neural Network:
 
+By: Phillip Boll
+
+
 #self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding);
     
 
