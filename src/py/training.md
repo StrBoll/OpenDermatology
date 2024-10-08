@@ -36,7 +36,7 @@
 
 
 
-# So how can we determine which numbers to use for these parameters?
+#So how can we determine which numbers to use for these parameters?
 
 
 # For input and output channels, the input depends on if its grayscale (1) or RGB (3) like pixel channels. 
@@ -59,7 +59,7 @@
 
 
 
-# Experimenting with hyperparameter tuning
+#Experimenting with hyperparameter tuning
 
 # Grid search and random search are two places to start when trying to optimize your parameters
 # Grid search looks at all the possible combinations of a set of hyperparameters while random search picks random combinations
@@ -70,7 +70,7 @@
 
 
 
-# Best recommendations: Start Simple before you increase complexity
+#Best recommendations: Start Simple before you increase complexity
 # Start with a simple architecture for your model, this means for example 32 filters, 3x3 kernels, stride=1 and padding=1. You adjust them as you train. 
 
 # If we get lazy we can always use a popular pre-trained model as reference like VGG which also uses a 3x3 convo layers. 
@@ -82,7 +82,7 @@
 
 
 
-# Key Hyperparameters in CNN Training: 
+#Key Hyperparameters in CNN Training: 
 
 
 # 1. Learning Rate
@@ -99,7 +99,7 @@
 
 
 
-# Learning Rate:
+#Learning Rate:
 # Learning Rate controls how large the updates to the model's weight are during the training.
 # Weights can be defined as the parameter which determines the influence or importance of each specific neuron. 
 # Basically, it decide which neurons should have more influence over the results of the training, since neurons connect to one another in each layer of the network, each connection has a weight between them to decide the influence from one neuron to the next
@@ -123,7 +123,7 @@
 
 
 
-# Batch Size 
+#Batch Size 
 # Batch Size represents the number of training samples that our model will processs before it updates the weights with the optimizer
 # Updating the model after each sample would take too long, while updating after all sample would not fit into our memory
 # Instead, we split the dataset into a smaller number of batches 
@@ -137,11 +137,11 @@
 
 
 
-# Epoch Count
+#Epoch Count
 # The number of epochs in a complete pass throghout the whole training dataset. Like, passing through the whole MNIST data set of images 
 # This number will determine how many times the model will see the entire dataset while training 
 
-# Ways to optimize Epoch Count
+#Ways to optimize Epoch Count
 # Start smaller around 5 to 10 epochs. Monitor the validation accuracy as well as the loss gradient
 # A common way of telling if the model is overfitting, meaning seeing it too much, is if the performance of the model stops improving
 # Overfitting is when you have good performance on your data set but poor performance on the validation set 
@@ -150,6 +150,38 @@
 # In the case of underfitting, you would just increase the number of epochs
 # One good practice is called "Early Stopping"
 # Early Stopping involves stopping the training process when validation accuracy stops improving, this avoids training too much too long 
+
+
+
+#Momentum
+# Momentum is a technique used along with the optimizers in order to accelerate learning. It allows our model to overcome small bugs in the loss area, so that it can operate much more smoothly
+# It adds a fraction of the previous weight update to the current update, this can help speed up convergence in training 
+# Some of the typical values to start with are 0.8, 0.9, and 0.99
+# A high momentum, which would be anything 0.9 and above leads to faster convergence and better, smoother learning 
+# However, be warned that if momentum is too high, it will cause the model to "overshoot" and under perform
+
+
+#Dropoout Rate
+# Dropout Rate represents a "regularization" technique thats main goal is to prevent overfitting 
+# Dropout rate prevents overfitting by randomly setting a fraction of the neurons in a layer to 0 during a forward pass through the network. 
+# Setting them to 0 prevents the network from relying too much on specific neurons, which could greatly skew our results if some of our training images are too unique 
+
+
+
+#Optimizer (SGD, Adam and more)
+# Optimizer essentially defines how the weights of the model are updated based on loss gradients. 
+# Different optimizers are deployed for different solutions, each has their own strengths and weaknesses and use different strategies to adjust the learning rate and improve your convergence of your model
+# Look up the different optimizers 
+
+
+#Weight Decay 
+# Weight Decay is a technique where we penalize large weights in a model to regularize it and reduce overfitting 
+# It reduces overfitting by not allowing the model to rely too heavily on specific features in our feature map 
+# Best practices are to set it low like somewhere around 0.0001 or 0.01. 
+# If the model starts to underfit, we can always reduce our weight decay and it could possibly help
+
+
+
 
 
 
