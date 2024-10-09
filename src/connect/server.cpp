@@ -23,14 +23,25 @@ int main () {
    app().registerHandler("/uploadImage", [](const HttpRequest &request, function<void(const HttpResponse&)> &&callback){
 
 
-    // for handling uploading an image to the frontend
+    auto images = request->getFiles();
+    if (images.empty()){
+        auto resp = HttpResponse::newHttpResponse();
+        resp->setBody("No image found");
+        callback(resp);
+        return ;
+    }
 
-    // should send the image for processing through /cpp/input.cpp
+    else {
+
+        for (auto iter = images.begin(); iter != images.end(); ++iter){
+            
+            
+
+            
+        }
+    }
 
 
-    // afterwards, should connect to images database and store the image binary data there 
-
-    
    });
 
 
