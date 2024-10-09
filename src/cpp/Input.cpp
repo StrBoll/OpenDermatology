@@ -46,20 +46,21 @@ void normalizeImage(Mat& image) {
     divide(image, stddeviation, image);
 }
 
-int main() {
-    string path = "images/the.jpg";
+
+bool processImage(string& imagePath){
+    string path = imagePath;
     Mat img1 = imread(path);
     
     if (img1.empty()) {
         cout << "Image not read properly" << endl;
-        return -1;
+        return false;
     }
 
     Mat resized_image = resizeWithPadding(img1, 224);
     
     if (resized_image.empty()) {
         cout << "Error: Unable to load image!" << endl;
-        return -1;
+        return false;
     }
 
     vector<Mat> bgr_channels;
@@ -82,18 +83,13 @@ int main() {
     
     normalizeImage(gray);
 
-    imshow("manual grayscale", gray);
+    // imshow("manual grayscale", gray); // uncomment for showing image after grayscaling it
 
-    // Create the 'processed' folder if it doesn't exist
-    struct stat info;
-    if (stat("/processed", &info) != 0) {
-        mkdir("/processed", 0777);  // Creates folder with read/write/execute permissions
-    }
 
-    // Add a counter for the filenames
+    // Add a counter for the filenames to store to database
     static int counter = 1;
 
-    // Generate a unique filename
+    // basically lets us make a plethora of images numbered with simple titles 
     std::ostringstream filename;
     filename << "processed/output_" << counter << ".jpg";
 
@@ -125,5 +121,5 @@ int main() {
 
     waitKey(0);
 
-    return 0;
+    
 }
