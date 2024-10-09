@@ -1,5 +1,6 @@
 #include <drogon/drogon.h>
 #include <pqxx/pqxx>
+#include "include/input.h"
 
 using namespace drogon;
 using namespace std;
@@ -20,29 +21,45 @@ int main () {
     */
 
 
-   app().registerHandler("/uploadImage", [](const HttpRequest &request, function<void(const HttpResponse&)> &&callback){
+    app().registerHandler("/uploadImage", [](const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback) {
 
 
     auto images = request->getFiles();
     if (images.empty()){
-        auto resp = HttpResponse::newHttpResponse();
-        resp->setBody("No image found");
-        callback(resp);
+        auto response = HttpResponse::newHttpResponse();
+        response->setBody("No image found");
+        callback(response);
         return ;
     }
 
-    else {
+    for (const auto& file : images){
+        string filePath = file.getFileName();
 
-        for (auto iter = images.begin(); iter != images.end(); ++iter){
-            
-            
+        if (processImage(filePath) == true){
+            cout << "Successfully processed " << filePath << endl;
 
-            
+        } else {
+            auto response = HttpResponse::newHttpResponse();
+            response->setStatusCode(k500InternalServerError);
+            response->setBody("Image unable to be processed");
+            callback(response);
+            return;
         }
+
+
+        
     }
+
+    auto response = HttpResponse::newHttpResponse();
+    response->setStatusCode(k200OK);
+    response->setBody("Images processed successfully");
+    callback(response);
+    
 
 
    });
+
+   app().addListener("0.0.0.0", 18080).run();
 
 
 }
