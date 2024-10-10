@@ -3,13 +3,13 @@ import React, { useState } from "react";
 
 
 const imageToFolder = async (upload, setStatusMessage) => {
-  const data = new FormData();
-  data.append("skin_image", upload);
+  //const data = new FormData();
+  //data.append("skin_image", upload);
 
   try {
-    const response = await fetch('http://localhost:18080/uploadImage', {
+    const response = await fetch('http://3.145.9.247:8080/healthCheck', {
       method: 'POST',
-      body: data
+      //body: data
 
 
     });
