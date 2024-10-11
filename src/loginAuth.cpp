@@ -1,6 +1,6 @@
 #include <pqxx/pqxx>
 #include <iostream>
-#include "loginAuth.h"
+
 
 using namespace pqxx;
 using namespace std;
@@ -8,7 +8,7 @@ using namespace std;
 bool userExists(string username){
 
     try {
-        connection C("dbname=logins user=phillipboll3 password='NewPassword2024' host=localhost port=5432");
+        connection C("dbname=logins user=yourusername password='yourpassword' host=localhost port=5432");
 
 
         if (C.is_open()){
@@ -25,11 +25,15 @@ bool userExists(string username){
             } else {
                 return true;
             }
+
+
+            return false; 
         }
         
 
     } catch (const exception &e){
         cerr << e.what() << endl;
+        return false; 
     }
 
 

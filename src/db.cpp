@@ -9,7 +9,7 @@ using namespace std;
 
 bool insertImageDB(const char *image_binary, size_t image_size, string file_name, int ufid){
     try {
-        connection C("dbname=submissions user=phillipboll3 password=#NewPassword2024 host=localhost port=5432");
+        connection C("dbname=submissions user=yourusername password=yourpassword host=localhost port=5432");
 
         if (C.is_open()){
 
