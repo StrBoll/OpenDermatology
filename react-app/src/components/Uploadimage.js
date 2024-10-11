@@ -45,14 +45,9 @@ const Image = () => {
 
   return (
     <div>
-<<<<<<< HEAD
-     
+
       <h1>Upload Image</h1>
 
-=======
->>>>>>> 87957b4987376ba8459e3d96c92fe4dba54fdabf
-
-      
       {selectedImage && (
         <div>
           <img

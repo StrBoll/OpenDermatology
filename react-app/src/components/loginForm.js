@@ -1,5 +1,5 @@
 // src/components/LoginForm.js
-
+import { Auth } from './auth';
 import React, { useState } from 'react';
 
 const LoginForm = ({ onLogin }) => {
