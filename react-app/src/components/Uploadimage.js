@@ -6,8 +6,8 @@ const Image = () => {
   return (
     <div>
      
-      <h1>Upload and Display Image</h1>
-      <h3>using React Hooks</h3>
+      <h1>Upload Image</h1>
+
 
     
       {selectedImage && (
