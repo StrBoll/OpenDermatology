@@ -1,36 +1,44 @@
 // src/components/LoginForm.js
-import { Auth } from './auth';
+import { auth, googleprovider } from '../config/firebase-config';
+import { signInWithPopup, signOut} from 'firebase/auth'
 import React, { useState } from 'react';
 
-const LoginForm = ({ onLogin }) => {
-const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+export const LoginForm = ({ onLogin }) => {
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-        onLogin({ email, password });
+
+const signIn = async () => {
+  try{
+    await signInWithPopup(auth, googleprovider);
+  } catch (err){
+    console.error(err);
+  }
+ 
+
 };
 
+const signout = async () => {
+  try{
+    await signOut(auth);
+  } catch (err){
+    console.error(err);
+  }
+ 
+
+};
+
+
   return (
-<form onSubmit={handleSubmit}>
-  <div>
-      <label>Email:</label>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-  </div>
-  <div>
-  <label>Password:</label>
-    <input
-      type="password"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      />
-  </div>
-  <button type="submit">Login</button>
-</form>
+    <div>
+      <input placeholder='Email...'
+      onChange={(e) => setEmail(e.target.value)}/>
+      <input placeholder='Password...'
+      onChange={(e) => setPassword(e.target.value)}/>
+      <button onClick={signIn}>Sign in</button>
+      <button onClick={signout}>Logout</button>
+
+</div>
   );
 };
 

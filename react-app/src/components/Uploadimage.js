@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 
-
-
 const imageToFolder = async (upload, setStatusMessage) => {
   //const data = new FormData();
   //data.append("skin_image", upload);
