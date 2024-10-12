@@ -1,6 +1,7 @@
 import { auth, googleprovider } from '../config/firebase-config';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import React, { useState } from 'react';
+import { Route } from 'react-router-dom';
 
 export const LoginForm = ({ onLogin }) => {
  
@@ -23,6 +24,7 @@ export const LoginForm = ({ onLogin }) => {
     try {
       if (email.endsWith("@ufl.edu")) {
         console.log("success");
+        Route("/");
       }
       else {
         alert('Invalid email or password');
@@ -35,6 +37,7 @@ export const LoginForm = ({ onLogin }) => {
   const signout = async () => {
     try {
       await signOut(auth);
+      console.log("signed out");
     } catch (err) {
       console.error(err);
     }
