@@ -3,8 +3,7 @@ import { signInWithPopup, signOut } from 'firebase/auth';
 import React, { useState } from 'react';
 
 export const LoginForm = ({ onLogin }) => {
-  const [name, setName] = useState("");
-  
+ 
   const user = auth.currentUser;
   if (user) {
     console.log(user.email);
@@ -15,21 +14,18 @@ export const LoginForm = ({ onLogin }) => {
   const signIn = async () => {
     try {
       const result = await signInWithPopup(auth, googleprovider);
-      const name = result.user;
-      setName(name);
-      if (onLogin) {
-        onLogin(auth.currentUser);
-        next();
-      }
+      await next(result.user.email);
     } catch (err) {
       console.error(err);
     }
   };
-  const next = async () => {
+  const next = async (email) => {
     try {
-      if (name.email.endsWith("@ufl.edu")) {
+      if (email.endsWith("@ufl.edu")) {
+        console.log("success");
       }
       else {
+        alert('Invalid email or password');
         await signOut(auth);
       }
     } catch (err) {

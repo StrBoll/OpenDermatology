@@ -2,8 +2,9 @@ import React from 'react';
 import LoginForm from '../components/loginForm';
 import { useNavigate } from 'react-router-dom';
 
-  const LoginPage = () => {
+const LoginPage = () => {
 const navigate = useNavigate();
+
 
 const handleLogin = async (credentials) => {
 
@@ -17,7 +18,7 @@ alert('Invalid email or password');
   return (
     <div>
 <h2>Login</h2>
-<LoginForm onLogin={handleLogin} />
+<LoginForm />
     </div>
   );
 };
