@@ -11,10 +11,6 @@ using namespace std;
 using namespace pqxx;
 using namespace cv;
 
-
-
-
-
 int main () {
    app().registerHandler("/healthCheck", [](const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback) {
         auto resp = HttpResponse::newHttpResponse();
@@ -25,36 +21,25 @@ int main () {
         callback(resp);
     });
 
-
-
-
    
 app().registerHandler("/uploadImage", [](const HttpRequestPtr& req, std::function<void(const HttpResponsePtr &)> &&callback) {
         try {
         MultiPartParser fileUpload;
-        
+
         if (fileUpload.parse(req) != 0 || fileUpload.getFiles().empty()) {
             throw runtime_error("No files uploaded or parsing failed");
         }
-
-
         for (const auto& file : fileUpload.getFiles()) {
             LOG_INFO << "Received file: " << file.getFileName() 
              << " with key: " << file.getItemName();
 }
-
-
         auto &file = fileUpload.getFiles()[0];
-
         auto byteStream = file.fileContent();
-
         vector<uchar> buffer(byteStream.begin(), byteStream.end());
         Mat img = imdecode(buffer, IMREAD_COLOR);
-
         if (img.empty()){
             throw runtime_error("Image is empty");
         }
-
         if (processImage(img) == false){
             throw runtime_error("Image went to processing but returned failure");
         }
@@ -63,7 +48,6 @@ app().registerHandler("/uploadImage", [](const HttpRequestPtr& req, std::functio
         resp->setBody("Image processed !!!!!");
         callback(resp);
 
-
         } catch (const exception & e){
             cerr << e.what() << endl;
             auto resp = HttpResponse::newHttpResponse();
@@ -71,17 +55,8 @@ app().registerHandler("/uploadImage", [](const HttpRequestPtr& req, std::functio
             resp->setBody("Try block unable to execute");
             callback(resp);
         }
-
         });
-
-
         
-
-
-
-
-
-
     app().setLogLevel(trantor::Logger::kTrace);  
     LOG_INFO << "Starting server on port 3000";
     app().addListener("0.0.0.0", 3000).run();

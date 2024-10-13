@@ -5,8 +5,8 @@ import { Route } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 export const LoginForm = ({ onLogin }) => {
+
   const navigate = useNavigate();
- 
   const user = auth.currentUser;
   if (user) {
     console.log(user.email);
