@@ -41,60 +41,41 @@ void normalizeImage(Mat& image) {
 }
 
 
-bool processImage(string& imagePath){
-    string path = imagePath;
-    Mat img1 = imread(path);
-    
-    if (img1.empty()) {
-        cout << "Image not read properly" << endl;
+bool processImage(Mat& img){
+
+    if (img.empty()){
+        cout << "Image is empty" << endl;
         return false;
     }
+    
 
-    Mat resized_image = resizeWithPadding(img1, 224);
+    Mat resized_image = resizeWithPadding(img, 224);
     
     if (resized_image.empty()) {
-        cout << "Error: Unable to load image!" << endl;
+        cout << "Error: Unable to load image" << endl;
         return false;
     }
 
-    vector<Mat> bgr_channels;
-    split(resized_image, bgr_channels);
-    
-    Mat B = bgr_channels[0];
-    Mat G = bgr_channels[1];
-    Mat R = bgr_channels[2];
-    
-    Mat gray = Mat::zeros(resized_image.rows, resized_image.cols, CV_8UC1);
-    
-    for (unsigned int i = 0; i < resized_image.rows; i++) {
-        for (unsigned int j = 0; j < resized_image.cols; j++) {
-            gray.at<uchar>(i, j) = static_cast<uchar>(
-                0.2989 * R.at<uchar>(i, j) +
-                0.5870 * G.at<uchar>(i, j) +
-                0.1140 * B.at<uchar>(i, j));
-        }
-    }
-    
-    normalizeImage(gray);
-
-    // imshow("manual grayscale", gray); // uncomment for showing image after grayscaling it
-
-
-    // Add a counter for the filenames to store to database
     static int counter = 1;
 
-    // basically lets us make a plethora of images numbered with simple titles 
+    Mat grayscale;
+
+    normalizeImage(resized_image);
+
+    cvtColor(resized_image, grayscale, COLOR_BGR2GRAY);
+
     std::ostringstream filename;
     filename << "processed/output_" << counter << ".jpg";
 
     // Save the processed image with the unique filename
-    imwrite(filename.str(), gray);
+    imwrite(filename.str(), grayscale);
 
 
     // ----------------------------------------------------------------------------------------
 
         // Need to get UFID, but this is just for proof of concept:
 
+        /*
         vector<uchar> buffer;
         imencode(".jpg", gray, buffer); 
         const char* image_binary = reinterpret_cast<const char*>(buffer.data());
@@ -103,7 +84,7 @@ bool processImage(string& imagePath){
 
         insertImageDB(image_binary, image_size, filename.str());
     
-
+        */
 
 
     // ----------------------------------------------------------------------------------------
