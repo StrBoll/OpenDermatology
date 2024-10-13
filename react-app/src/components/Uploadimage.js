@@ -5,10 +5,15 @@ const imageToFolder = async (upload, setStatusMessage) => {
   data.append("skin_image", upload);
 
   try {
-    const response = await fetch('http://52.87.60.145:3000/healthCheck', {
+    const response = await fetch('http://52.87.60.145:3000/uploadImage', {
       method: 'POST',
       body: data,
-      mode: 'no-cors'
+      headers: {
+
+        'Accept': 'application/json'
+      }
+
+
 
 
     });
