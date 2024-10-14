@@ -41,62 +41,30 @@ void normalizeImage(Mat& image) {
 }
 
 
-bool processImage(Mat& img){
 
-    if (img.empty()){
-        cout << "Image is empty" << endl;
-        return false;
-    }
-    
+bool processImage(Mat& img) {
 
-    Mat resized_image = resizeWithPadding(img, 224);
-    
-    if (resized_image.empty()) {
-        cout << "Error: Unable to load image" << endl;
+    if (img.empty()) {
+        cerr << "Image is empty" << endl;
         return false;
     }
 
-    static int counter = 1;
-
-    Mat grayscale;
-
-    normalizeImage(resized_image);
-
-    cvtColor(resized_image, grayscale, COLOR_BGR2GRAY);
-
-    std::ostringstream filename;
-    filename << "processed/output_" << counter << ".jpg";
-
-    // Save the processed image with the unique filename
-    imwrite(filename.str(), grayscale);
-
-
-    // ----------------------------------------------------------------------------------------
-
-        // Need to get UFID, but this is just for proof of concept:
-
-        /*
-        vector<uchar> buffer;
-        imencode(".jpg", gray, buffer); 
-        const char* image_binary = reinterpret_cast<const char*>(buffer.data());
-        size_t image_size = buffer.size();
-
-
-        insertImageDB(image_binary, image_size, filename.str());
     
-        */
+    Mat resized_image;
 
+    try {
+        resized_image = resizeWithPadding(img, 224);
+        normalizeImage(resized_image);
+        Mat grayscale;
+        cvtColor(resized_image, grayscale, COLOR_BGR2GRAY);
+    } 
+    catch (const exception &e) {
+        cerr << "error during processing" << endl;
+        cerr << e.what() << endl;
+        return false;
+    }
 
-    // ----------------------------------------------------------------------------------------
-
-
-    cout << "Image saved as " << filename.str() << endl;
-
-    counter++;  
-
-    waitKey(0);
-
-    
-
-    
+    return true;
 }
+
+
