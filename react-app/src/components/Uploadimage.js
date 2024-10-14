@@ -15,17 +15,20 @@ const imageToFolder = async (upload, setStatusMessage) => {
 
     });
 
+    const responseMess = await response.text();
+
     if (response.ok) {
 
-
+      console.log("response ok message: ", responseMess)
       setStatusMessage("Image uploaded successfully!");      
     } else {
 
-
+      console.log("error response: ", responseMess)
       setStatusMessage("Backend function called, image upload failed");
     }
 
   } catch (error) {
+    
     setStatusMessage("Couldn't contact backend to process image");
   }
 };

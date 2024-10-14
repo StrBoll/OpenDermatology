@@ -1,63 +1,82 @@
 #include <drogon/drogon.h>
 #include <drogon/HttpAppFramework.h>
 #include <drogon/MultiPart.h>
-#include <drogon/HttpRequest.h>
 #include <pqxx/pqxx>
-#include "input.h"
 #include <opencv2/opencv.hpp>
+#include <iostream>
+#include "input.h"
 
 using namespace drogon;
 using namespace std;
 using namespace pqxx;
 using namespace cv;
 
-int main () {
-   app().registerHandler("/healthCheck", [](const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback) {
+void addCorsHeaders(const HttpResponsePtr &response) {
+    response->addHeader("Access-Control-Allow-Origin", "*");
+    response->addHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response->addHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
+}
+
+int main() {
+    app().registerHandler(
+        "/{path}",
+        [](const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback) {
+            if (req->method() == HttpMethod::Options) {
+                auto resp = HttpResponse::newHttpResponse();
+                addCorsHeaders(resp);
+                callback(resp);
+                return;
+            }
+            callback(HttpResponse::newNotFoundResponse());
+        },
+        {Get, Post, Options} 
+        );
+
+    app().registerHandler("/healthCheck", [](const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback) {
         auto resp = HttpResponse::newHttpResponse();
-        resp->addHeader("Access-Control-Allow-Origin", "*");  // Allow all origins
-        resp->addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-        resp->addHeader("Access-Control-Allow-Headers", "Content-Type");
+        addCorsHeaders(resp);
         resp->setBody("Server is running");
         callback(resp);
     });
 
-   
-app().registerHandler("/uploadImage", [](const HttpRequestPtr& req, std::function<void(const HttpResponsePtr &)> &&callback) {
+    app().registerHandler("/uploadImage", [](const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback) {
         try {
-        MultiPartParser fileUpload;
+            MultiPartParser fileUpload;
+            if (fileUpload.parse(req) != 0 || fileUpload.getFiles().empty()) {
+                throw runtime_error("No files uploaded or parsing failed");
+            }
 
-        if (fileUpload.parse(req) != 0 || fileUpload.getFiles().empty()) {
-            throw runtime_error("No files uploaded or parsing failed");
-        }
-        for (const auto& file : fileUpload.getFiles()) {
-            LOG_INFO << "Received file: " << file.getFileName() 
-             << " with key: " << file.getItemName();
-}
-        auto &file = fileUpload.getFiles()[0];
-        auto byteStream = file.fileContent();
-        vector<uchar> buffer(byteStream.begin(), byteStream.end());
-        Mat img = imdecode(buffer, IMREAD_COLOR);
-        if (img.empty()){
-            throw runtime_error("Image is empty");
-        }
-        if (processImage(img) == false){
-            throw runtime_error("Image went to processing but returned failure");
-        }
+            const auto &file = fileUpload.getFiles()[0];
+            LOG_INFO << "Received file: " << file.getFileName() << " with key: " << file.getItemName();
 
-        auto resp = HttpResponse::newHttpResponse();
-        resp->setBody("Image processed !!!!!");
-        callback(resp);
+            auto byteStream = file.fileContent();
+            vector<uchar> buffer(byteStream.begin(), byteStream.end());
+            Mat img = imdecode(buffer, IMREAD_COLOR);
 
-        } catch (const exception & e){
-            cerr << e.what() << endl;
+            if (!processImage(img)) {
+                throw runtime_error("Processing function not working");
+            }
+            
+            cout << "Error checkpoint for manual executable logs on SSH " << endl; 
+            // the above is only necessary if try block is failing in the upload image component on frontend
+            // When I checked the logs we were stopping at the part where I called processImage() and thats cause
+            // - thats cause it was running an illegal call or something 
+
+            auto resp = HttpResponse::newHttpResponse();
+            addCorsHeaders(resp);
+            resp->setBody("Image processed successfully!");
+            callback(resp);
+            
+        } catch (const exception &e) {
             auto resp = HttpResponse::newHttpResponse();
             resp->setStatusCode(k500InternalServerError);
-            resp->setBody("Try block unable to execute");
+            addCorsHeaders(resp);
+            resp->setBody("Try block in uploadImage server.cpp failed, error was: " );
             callback(resp);
         }
-        });
-        
-    app().setLogLevel(trantor::Logger::kTrace);  
+    });
+
+    app().setLogLevel(trantor::Logger::kTrace);
     LOG_INFO << "Starting server on port 3000";
     app().addListener("0.0.0.0", 3000).run();
 }
