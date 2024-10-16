@@ -1,9 +1,9 @@
 #include "input.h"
-
+#include "db.h"
 
 using namespace cv;
 using namespace std;
-
+using namespace pqxx;
 /*
  Section 1: Reading Images
 */
@@ -57,6 +57,7 @@ bool processImage(Mat& img) {
         normalizeImage(resized_image);
         Mat grayscale;
         cvtColor(resized_image, grayscale, COLOR_BGR2GRAY);
+        sendToDatabase(grayscale);
     } 
     catch (const exception &e) {
         cerr << "error during processing" << endl;
@@ -65,6 +66,27 @@ bool processImage(Mat& img) {
     }
 
     return true;
+}
+
+bool sendToDatabase(Mat& img){
+    
+    int size = img.total() * img.elemSize();
+    const uchar* data = img.data; // values are only positive
+
+    // Some trial and error, found that its better to init as unsigned char* and then cast 
+    // it to const char* since with OpenCV they only use positive values and I guess it saves space on the stack
+
+    try {
+        insertImageDB(reinterpret_cast<const char*>(data), size, "Test_image");
+    } catch (const exception & e){
+        cerr << e.what() << endl;
+        return false;
+        
+    }
+
+    return true;
+    
+
 }
 
 
