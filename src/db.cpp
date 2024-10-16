@@ -7,17 +7,17 @@
 using namespace pqxx;
 using namespace std;
 
-bool insertImageDB(const char *image_binary, size_t image_size, string file_name, int ufid){
+bool insertImageDB(const char *image_binary, size_t image_size, string file_name){
     try {
-        connection C("dbname=submissions user=yourusername password=yourpassword host=localhost port=5432");
+        connection C("dbname=submissions");
 
         if (C.is_open()){
 
             work W(C);
 
-            string command = "INSERT INTO images_submitted (image_data, file_name, UFID) VALUES ($1, $2, $3);";
+            string command = "INSERT INTO images_submitted (image_data, file_name) VALUES ($1, $2);";
 
-            W.exec_params(command, binarystring(image_binary, image_size), file_name, ufid);
+            W.exec_params(command, binarystring(image_binary, image_size), file_name);
             W.commit();
 
             cout << "Image submitted to database" << endl;
@@ -38,7 +38,7 @@ bool insertImageDB(const char *image_binary, size_t image_size, string file_name
 
 bool insertUserDB(int ufid, string first_name, string last_name){
     try {
-        connection C("dbname=submissions user=your_local_user password='your_local_password' host=localhost port=5432");
+        connection C("dbname=submissions");
 
         if (C.is_open()){
         work W(C);

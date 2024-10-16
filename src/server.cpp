@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include "input.h"
+#include "db.h"
 
 using namespace drogon;
 using namespace std;
@@ -57,11 +58,11 @@ int main() {
                 throw runtime_error("Processing function not working");
             }
             
-            cout << "Error checkpoint for manual executable logs on SSH " << endl; 
+            // cout << "Error checkpoint for manual executable logs on SSH " << endl; 
             // the above is only necessary if try block is failing in the upload image component on frontend
             // When I checked the logs we were stopping at the part where I called processImage() and thats cause
             // - thats cause it was running an illegal call or something 
-
+            
             auto resp = HttpResponse::newHttpResponse();
             addCorsHeaders(resp);
             resp->setBody("Image processed successfully!");

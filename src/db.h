@@ -5,7 +5,7 @@
 #include <string> 
 
 
-bool insertImageDB(const char *image_binary, size_t image_size, std::string file_name, int ufid = 0);
+bool insertImageDB(const char *image_binary, size_t image_size, std::string file_name);
 
 bool insertUserDB(int ufid, std::string first_name, std::string last_name);
 

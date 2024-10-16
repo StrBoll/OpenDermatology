@@ -16,7 +16,7 @@ using namespace std;
 Mat resizeWithPadding(Mat& image, int sizeWanted);
 void normalizeImage(Mat& image);
 bool processImage(Mat& imagePath);
-
+bool sendToDatabase(Mat& img);
 
 
 
