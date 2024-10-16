@@ -8,10 +8,12 @@ import Image from '../components/Uploadimage';
 
 export const Openderm = () => {
   
+  const navigate = useNavigate();
     const signout = async () => {
         try {
           await signOut(auth);
           console.log("signed out");
+          navigate('/login'); 
         } catch (err) {
           console.error(err);
         }
