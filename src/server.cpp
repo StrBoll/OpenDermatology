@@ -4,6 +4,7 @@
 #include <pqxx/pqxx>
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <vector>
 #include "input.h"
 #include "db.h"
 
@@ -75,6 +76,23 @@ int main() {
             resp->setBody("Try block in uploadImage server.cpp failed, error was: " );
             callback(resp);
         }
+    });
+
+     app().registerHandler("/showLastImage", [](const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback) {
+        
+        vector<unsigned char> byte_data = retrieveImage();
+        string result;
+        if (sendToFront(byte_data)){
+            result = "Byte data retrieved successfully";
+
+        } else {
+            result = "Could not get byte data to image";
+        }
+        
+        auto resp = HttpResponse::newHttpResponse();
+        addCorsHeaders(resp);
+        resp->setBody(result);
+        callback(resp);
     });
 
     app().setLogLevel(trantor::Logger::kTrace);

@@ -87,4 +87,27 @@ bool sendToDatabase(Mat& img){
 
 }
 
+bool sendToFront(vector<unsigned char> image_byte_data){
+    try {
+    if (image_byte_data.empty()){
+        cerr << "Image byte data empty" << endl;
+        return false;
+    } else {
+        Mat image = imdecode(image_byte_data, IMREAD_COLOR);
 
+        if (image.empty()){
+            cerr << "Was unable to decode image byte data" << endl;
+            return false;
+        }
+        else {
+            //imshow("Retrieved from Database: ", image);
+            // waitKey(0);
+            cerr << "Was able to decode image" << endl;
+            return true;
+        }
+        return false;
+    }} catch (const exception &e){
+        cerr << e.what() << " Try block failed when sending byte data to opencv " << endl;
+        return false;
+    }
+}

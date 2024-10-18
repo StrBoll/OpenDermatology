@@ -8,6 +8,7 @@
 #include <sys/stat.h>  
 #include <sstream>
 #include <string> 
+#include <vector>
 #include "db.h"
 
 using namespace cv;
@@ -17,6 +18,7 @@ Mat resizeWithPadding(Mat& image, int sizeWanted);
 void normalizeImage(Mat& image);
 bool processImage(Mat& imagePath);
 bool sendToDatabase(Mat& img);
+bool sendToFront(vector<unsigned char> image_byte_data);
 
 
 

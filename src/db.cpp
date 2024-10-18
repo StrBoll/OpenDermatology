@@ -9,7 +9,7 @@ using namespace std;
 
 bool insertImageDB(const char *image_binary, size_t image_size, string file_name){
     try {
-        connection C("");
+        connection C("dbname=submissions user=admin password=#Success1s0ntheway@123 host=localhost port=5432");
 
         if (C.is_open()){
 
@@ -38,7 +38,7 @@ bool insertImageDB(const char *image_binary, size_t image_size, string file_name
 
 bool insertUserDB(int ufid, string first_name, string last_name){
     try {
-        connection C("");
+        connection C("dbname=submissions user=admin password=#Success1s0ntheway@123 host=localhost port=5432");
 
         if (C.is_open()){
         work W(C);
@@ -65,7 +65,7 @@ bool insertUserDB(int ufid, string first_name, string last_name){
 
 vector<unsigned char> retrieveImage(){
     try {
-        Connection C("");
+        connection C("dbname=submissions user=admin password=#Success1s0ntheway@123 host=localhost port=5432");
 
         nontransaction N(C);
 
@@ -73,10 +73,9 @@ vector<unsigned char> retrieveImage(){
 
         result R(N.exec(command));
 
-        auto iter = result.begin();
+        string initialResult = R[0]["IMAGE_DATA"].as<string>();
 
-        vector<unsigned char> byte_data = iter["image_data"][0].as<vector<unsigned char>>();
-
+        vector<unsigned char> byte_data(initialResult.begin(), initialResult.end());
         return byte_data;
 
 
@@ -84,6 +83,6 @@ vector<unsigned char> retrieveImage(){
         cerr << e.what() << endl;
         cout << "Could not retrieve byte data from database" << endl;
         
-        return -1;
+        return {};
     }
 }
