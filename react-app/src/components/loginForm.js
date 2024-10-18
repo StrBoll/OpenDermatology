@@ -1,55 +1,71 @@
+import React, { useState, useEffect } from 'react';
 import { auth, googleprovider } from '../config/firebase-config';
-import { signInWithPopup, signOut } from 'firebase/auth';
-import React, { useState } from 'react';
-import { Route } from 'react-router-dom';
+import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import '../styles/ResnStyle.css';
 
-export const LoginForm = ({ onLogin }) => {
+const LoginForm = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();  // Hook for navigating
 
-  const navigate = useNavigate();
-  const user = auth.currentUser;
-  if (user) {
-    console.log(user.email);
-  } else {
-    console.log("No user is logged in");
-  }
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        if (!currentUser.email.endsWith('@ufl.edu')) {
+          alert('Invalid email domain. Only @ufl.edu is allowed.');
+          signOut(auth);  // Sign the user out
+          navigate('/login');  // Redirect to login page
+        }
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   const signIn = async () => {
     try {
       const result = await signInWithPopup(auth, googleprovider);
-      await next(result.user.email);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  const next = async (email) => {
-    try {
-      if (email.endsWith("@ufl.edu")) {
-        console.log("success");
-        navigate("/openderm");
-      }
-      else {
-        alert('Invalid email or password');
+      const email = result.user.email;
+      if (!email.endsWith('@ufl.edu')) {
+        alert('Only UFL email addresses are allowed.');
         await signOut(auth);
+        navigate('/login');  // Redirect to login after sign-out
+      } else {
+        navigate('/openderm');  // Redirect to Openderm if login is successful
       }
     } catch (err) {
-      console.error(err);
+      console.error('Sign-in error:', err);
+      alert('Failed to sign in. Please try again.');
     }
   };
+
   const signout = async () => {
     try {
       await signOut(auth);
-      console.log("signed out");
+      console.log('User signed out');
+      navigate('/login');  // Redirect to login after signout
     } catch (err) {
-      console.error(err);
+      console.error('Sign-out error:', err);
     }
   };
 
   return (
-    <div>
-    
-      <button onClick={signIn}>Sign in with ufl email</button>
-      <button onClick={signout}>Logout</button>
+    <div className="login-container">
+      {user ? (
+        <div>
+          <h2>Welcome</h2>
+          <p>{user.email}</p>
+          <button onClick={signout}>Logout</button>
+        </div>
+      ) : (
+        <div>
+          <h2>OpenDerm</h2>
+          <button onClick={signIn}>Sign in with UFL email</button>
+        </div>
+      )}
     </div>
   );
 };

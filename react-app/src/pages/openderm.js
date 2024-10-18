@@ -1,29 +1,24 @@
-import { auth } from '../config/firebase-config';
-import { signInWithPopup, signOut } from 'firebase/auth';
-import React, { useState } from 'react';
-import { Route } from 'react-router-dom';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Image from '../components/Uploadimage';
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firebase-config';
+import Image from '../components/Uploadimage';  // Ensure this path is correct
 
-
-export const Openderm = () => {
-  
+const Openderm = () => {
   const navigate = useNavigate();
-    const signout = async () => {
-        try {
-          await signOut(auth);
-          console.log("signed out");
-          navigate('/login'); 
-        } catch (err) {
-          console.error(err);
-        }
-      };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    navigate('/login');
+  };
 
   return (
-    <div>
-    <h1>Openderm</h1>
-    <button onClick={signout}>Logout</button>
-    <Image></Image>
+    <div className="openderm-container">
+      <h1>Openderm Page</h1>
+      <button className="logout-button" onClick={handleLogout}>Logout</button>
+
+      {/* Render the Image Upload Component */}
+      <Image />
     </div>
   );
 };
