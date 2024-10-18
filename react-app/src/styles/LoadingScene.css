@@ -12,36 +12,27 @@
     font-family: 'Helvetica Neue', Arial, sans-serif;
   }
   
-  .loading-content {
+  .loading-text {
+    position: absolute;
     text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
   }
   
-  .loading-content h1 {
-    font-size: 3rem;
-    margin-bottom: 2rem;
+  .loading-text h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
     letter-spacing: 0.5em;
-    animation: fadeIn 2s ease-in;
+    font-weight: 100;
   }
   
-  .loading-bar {
-    width: 200px;
-    height: 2px;
-    background-color: #333;
-    margin: 1rem auto;
-  }
-  
-  .loading-progress {
-    height: 100%;
-    background-color: #fff;
-    transition: width 0.5s ease-out;
-  }
-  
-  .loading-content p {
+  .loading-text p {
     font-size: 1rem;
     letter-spacing: 0.2em;
   }
   
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
   }

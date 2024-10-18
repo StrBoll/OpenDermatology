@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { auth, googleprovider } from '../config/firebase-config';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
 import '../styles/ResnStyle.css';
 
 const LoginForm = () => {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();  // Hook for navigating
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -14,8 +14,9 @@ const LoginForm = () => {
         setUser(currentUser);
         if (!currentUser.email.endsWith('@ufl.edu')) {
           alert('Invalid email domain. Only @ufl.edu is allowed.');
-          signOut(auth);  // Sign the user out
-          navigate('/login');  // Redirect to login page
+          signOut(auth);
+        } else {
+          navigate('/openderm');
         }
       } else {
         setUser(null);
@@ -32,10 +33,8 @@ const LoginForm = () => {
       if (!email.endsWith('@ufl.edu')) {
         alert('Only UFL email addresses are allowed.');
         await signOut(auth);
-        navigate('/login');  // Redirect to login after sign-out
-      } else {
-        navigate('/openderm');  // Redirect to Openderm if login is successful
       }
+      // No need to navigate here, the onAuthStateChanged will handle it
     } catch (err) {
       console.error('Sign-in error:', err);
       alert('Failed to sign in. Please try again.');
@@ -46,7 +45,6 @@ const LoginForm = () => {
     try {
       await signOut(auth);
       console.log('User signed out');
-      navigate('/login');  // Redirect to login after signout
     } catch (err) {
       console.error('Sign-out error:', err);
     }
