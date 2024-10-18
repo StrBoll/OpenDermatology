@@ -69,10 +69,8 @@ bool processImage(Mat& img) {
 }
 
 bool sendToDatabase(Mat& img){
-    
     int size = img.total() * img.elemSize();
     const uchar* data = img.data; // values are only positive
-
     // Some trial and error, found that its better to init as unsigned char* and then cast 
     // it to const char* since with OpenCV they only use positive values and I guess it saves space on the stack
 

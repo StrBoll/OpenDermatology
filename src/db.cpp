@@ -9,7 +9,7 @@ using namespace std;
 
 bool insertImageDB(const char *image_binary, size_t image_size, string file_name){
     try {
-        connection C("dbname=submissions");
+        connection C("your login info");
 
         if (C.is_open()){
 
@@ -38,7 +38,7 @@ bool insertImageDB(const char *image_binary, size_t image_size, string file_name
 
 bool insertUserDB(int ufid, string first_name, string last_name){
     try {
-        connection C("dbname=submissions");
+        connection C("your login info");
 
         if (C.is_open()){
         work W(C);
