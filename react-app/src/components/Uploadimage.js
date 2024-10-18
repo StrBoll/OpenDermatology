@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import imageCompression from 'browser-image-compression';
 
 const imageToFolder = async (upload, setStatusMessage) => {
   const data = new FormData();
@@ -9,48 +10,70 @@ const imageToFolder = async (upload, setStatusMessage) => {
       method: 'POST',
       body: data,
       headers: {
-
         'Accept': 'application/json'
       }
-
-
-
-
     });
 
     const responseMess = await response.text();
 
     if (response.ok) {
-
-      console.log("response ok message: ", responseMess)
-      setStatusMessage("Image uploaded successfully!");      
+      console.log("response ok message: ", responseMess);
+      setStatusMessage("Image uploaded successfully!");
     } else {
-
-      console.log("error response: ", responseMess)
+      console.log("error response: ", responseMess);
       setStatusMessage("Backend function called, image upload failed");
     }
-
   } catch (error) {
-    
     setStatusMessage("Couldn't contact backend to process image");
   }
 };
 
+
+
+
 const Image = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const [statusMessage, setStatusMessage] = useState(""); 
+  const [statusMessage, setStatusMessage] = useState("");
 
-  const uploadImageButton = () => {
+
+
+  const compressInput = async (file) => {
+    if (file.size > 1024 * 1024) { 
+      const requirements = {
+        maxSizeMB: 1, 
+        maxWidthOrHeight: 1920, 
+        useWebWorker: true,
+
+      };
+
+
+      try {
+        const compressedImage = await imageCompression(file, requirements);
+        return compressedImage;
+
+      } catch (error) {
+        console.log("Image above 1MB, unable to compress in good quality, ", error);
+        return file; 
+
+      }
+    }
+    return file; 
+  };
+
+  const uploadImageButton = async () => {
     if (selectedImage) {
-      
-      imageToFolder(selectedImage, setStatusMessage);
+      const compressedImage = await compressInput(selectedImage); 
+
+      imageToFolder(compressedImage, setStatusMessage); 
+
     } else {
       setStatusMessage("Please select an image before submitting.");
     }
   };
 
   return (
+
     <div>
 
       <h1>Upload Image</h1>
@@ -58,10 +81,9 @@ const Image = () => {
       {selectedImage && (
         <div>
           <img
-            
             width={"250px"}
             src={URL.createObjectURL(selectedImage)}
-
+            alt="Selected"
           />
           <br /> <br />
           <button onClick={() => setSelectedImage(null)}>Remove</button>
@@ -70,13 +92,10 @@ const Image = () => {
 
       <br />
 
-  
       <input
         type="file"
         name="myImage"
         accept="image/*"
-
-
         onChange={(event) => {
           const imageUploaded = event.target.files[0];
           console.log(imageUploaded);
@@ -89,7 +108,6 @@ const Image = () => {
       />
 
       <br /> <br />
-
 
       <button onClick={uploadImageButton}>Submit</button>
       <br /> <br />
