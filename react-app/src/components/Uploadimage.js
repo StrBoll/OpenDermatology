@@ -29,6 +29,33 @@ const imageToFolder = async (upload, setStatusMessage) => {
 };
 
 
+const imageToModel = async (upload, setStatusMessage) => {
+  const data = new FormData();
+  data.append("skin_image", upload);
+
+  try {
+    const response = await fetch('http://52.87.60.145:5000/toModel', {
+      method: 'POST',
+      body: data,
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    const responseMess = await response.text();
+
+    if (response.ok) {
+      console.log("response ok message: ", responseMess);
+      setStatusMessage("Image uploaded successfully!");
+    } else {
+      console.log("error response: ", responseMess);
+      setStatusMessage("Backend function called, image upload failed");
+    }
+  } catch (error) {
+    setStatusMessage("Couldn't contact backend to process image");
+  }
+};
+
 
 
 const Image = () => {
