@@ -93,6 +93,7 @@ const Image = () => {
       const compressedImage = await compressInput(selectedImage); 
 
       imageToFolder(compressedImage, setStatusMessage); 
+      imageToModel(compressedImage, setStatusMessage);
 
     } else {
       setStatusMessage("Please select an image before submitting.");
