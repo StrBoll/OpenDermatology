@@ -42,7 +42,7 @@ void normalizeImage(Mat& image) {
 
 
 
-bool processImage(Mat& img) {
+bool processImage(Mat& img, bool database) {
 
     if (img.empty()) {
         cerr << "Image is empty" << endl;
@@ -57,7 +57,10 @@ bool processImage(Mat& img) {
         normalizeImage(resized_image);
         Mat grayscale;
         cvtColor(resized_image, grayscale, COLOR_BGR2GRAY);
-        sendToDatabase(grayscale);
+        if (database){
+            sendToDatabase(grayscale);
+        }
+        
     } 
     catch (const exception &e) {
         cerr << "error during processing" << endl;
