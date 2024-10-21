@@ -9,7 +9,7 @@ using namespace std;
 
 bool insertImageDB(const char *image_binary, size_t image_size, string file_name){
     try {
-        connection C("dbname=submissions");
+        connection C("");
 
         if (C.is_open()){
 
@@ -38,7 +38,7 @@ bool insertImageDB(const char *image_binary, size_t image_size, string file_name
 
 bool insertUserDB(int ufid, string first_name, string last_name){
     try {
-        connection C("dbname=submissions");
+        connection C("");
 
         if (C.is_open()){
         work W(C);
@@ -60,4 +60,30 @@ bool insertUserDB(int ufid, string first_name, string last_name){
         return false;
     }
 
+}
+
+
+vector<unsigned char> retrieveImage(){
+    try {
+        Connection C("");
+
+        nontransaction N(C);
+
+        string command = "SELECT IMAGE_DATA FROM IMAGES_SUBMITTED ORDER BY ID DESC LIMIT 1;";
+
+        result R(N.exec(command));
+
+        auto iter = result.begin();
+
+        vector<unsigned char> byte_data = iter["image_data"][0].as<vector<unsigned char>>();
+
+        return byte_data;
+
+
+    } catch (const exception &e){
+        cerr << e.what() << endl;
+        cout << "Could not retrieve byte data from database" << endl;
+        
+        return -1;
+    }
 }
