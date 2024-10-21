@@ -41,6 +41,44 @@ int main() {
         callback(resp);
     });
 
+    app().registerHandler("/pre-process-only", [](const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback) {
+        try {
+            MultiPartParser fileUpload;
+            if (fileUpload.parse(req) != 0 || fileUpload.getFiles().empty()) {
+                throw runtime_error("No files uploaded or parsing failed");
+            }
+
+            const auto &file = fileUpload.getFiles()[0];
+            LOG_INFO << "Received file: " << file.getFileName() << " with key: " << file.getItemName();
+
+            auto byteStream = file.fileContent();
+            vector<uchar> buffer(byteStream.begin(), byteStream.end());
+            Mat img = imdecode(buffer, IMREAD_COLOR);
+
+            bool database = false;
+            if (!processImage(img, database)) {
+                throw runtime_error("Processing function not working");
+            }
+            
+            // cout << "Error checkpoint for manual executable logs on SSH " << endl; 
+            // the above is only necessary if try block is failing in the upload image component on frontend
+            // When I checked the logs we were stopping at the part where I called processImage() and thats cause
+            // - thats cause it was running an illegal call or something 
+            
+            auto resp = HttpResponse::newHttpResponse();
+            addCorsHeaders(resp);
+            resp->setBody("Image processed successfully!");
+            callback(resp);
+            
+        } catch (const exception &e) {
+            auto resp = HttpResponse::newHttpResponse();
+            resp->setStatusCode(k500InternalServerError);
+            addCorsHeaders(resp);
+            resp->setBody("Try block in uploadImage server.cpp failed, error was: " );
+            callback(resp);
+        }
+    });
+
     app().registerHandler("/uploadImage", [](const HttpRequestPtr &req, std::function<void(const HttpResponsePtr &)> &&callback) {
         try {
             MultiPartParser fileUpload;
@@ -55,7 +93,8 @@ int main() {
             vector<uchar> buffer(byteStream.begin(), byteStream.end());
             Mat img = imdecode(buffer, IMREAD_COLOR);
 
-            if (!processImage(img)) {
+            bool database = true;
+            if (!processImage(img, database)) {
                 throw runtime_error("Processing function not working");
             }
             
