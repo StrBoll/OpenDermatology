@@ -17,15 +17,16 @@ export const LoginForm = ({ onLogin }) => {
   const signIn = async () => {
     try {
       const result = await signInWithPopup(auth, googleprovider);
-      await next(result.user.email);
+      await next(result.user.email, result.user);
     } catch (err) {
       console.error(err);
     }
   };
-  const next = async (email) => {
+  const next = async (email, user) => {
     try {
       if (email.endsWith("@ufl.edu")) {
         console.log("success");
+        const uid = user.uid; 
         navigate("/openderm");
       }
       else {
