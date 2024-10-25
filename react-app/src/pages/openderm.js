@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Image from '../components/Uploadimage';
-
+import Input from '../components/firestore';
 
 export const Openderm = () => {
   
@@ -22,6 +22,7 @@ export const Openderm = () => {
     <h1>Openderm</h1>
     <button onClick={signout}>Logout</button>
     <Image></Image>
+    <Input/>
     </div>
   );
 };

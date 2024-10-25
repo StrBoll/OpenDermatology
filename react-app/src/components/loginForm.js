@@ -3,7 +3,6 @@ import { signInWithPopup, signOut } from 'firebase/auth';
 import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-
 export const LoginForm = ({ onLogin }) => {
 
   const navigate = useNavigate();
@@ -51,6 +50,7 @@ export const LoginForm = ({ onLogin }) => {
     
       <button onClick={signIn}>Sign in with ufl email</button>
       <button onClick={signout}>Logout</button>
+     
     </div>
   );
 };
