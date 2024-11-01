@@ -7,10 +7,10 @@ from PIL import Image
 app = Flask(__name__)
 CORS(app)
 
-model = ort.InferenceSession("best.onnx")
+model = ort.InferenceSession("CNN.onnx")
 
 
-def preprocess(image, target_size=(64, 64)): #64 64 for this onxx file but 224 224 for future reference 
+def preprocess(image, target_size=(24, 24)): #64 64 for this onxx file but 224 224 for future reference 
     
     image = image.resize(target_size)
 
