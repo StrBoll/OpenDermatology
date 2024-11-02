@@ -8,9 +8,16 @@ app = Flask(__name__)
 CORS(app)
 
 model = ort.InferenceSession("CNN.onnx")
+leison_names = ['Benign Keratosis', 
+                'Melanocytic Nevi',
+                'Dermatofibroma',
+                'Melanoma',
+                'Vasuclar',
+                'Basal Cell Carcinoma',
+            'Actinic Keratoses']
 
 
-def preprocess(image, target_size=(24, 24)): #64 64 for this onxx file but 224 224 for future reference 
+def preprocess(image, target_size=(224, 224)):
     
     image = image.resize(target_size)
 
@@ -59,13 +66,11 @@ def to_model():
         preprocessed_image = preprocess(image)
 
         results = predict(preprocessed_image)
+        probabilities = results[0].flatten()
+        predictions = {leison_names[i]: float(prob) for i, prob in enumerate(probabilities)}
+        top_3_predictions = dict(sorted(predictions.items(), key=lambda item: item[1], reverse=True)[:3])
 
-
-
-        return jsonify({"Probabilities list": results[0].tolist()}), 200
-        # Manav needs to get dictionary for the results list 
-        # Need to map each number (indexes 0 through etc) to a name for the diagnosis 
-
+        return jsonify({"Top 3 Predictions": top_3_predictions}), 200 
 
     except Exception as e:
         return jsonify({f"Couldn't process image: {str(e)}"}), 500
