@@ -29,9 +29,6 @@ def preprocess(image, target_size=(224, 224)):
 
     image_array = (image_array - mean) / std
 
-    image_array = np.transpose(image_array, (2, 0, 1)) 
-
-
     return np.expand_dims(image_array, axis=0)
 
 
