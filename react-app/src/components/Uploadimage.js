@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import '../styles/ResnStyle.css';
 import imageCompression from 'browser-image-compression';
 
 const imageToFolder = async (upload, setStatusMessage) => {
@@ -6,10 +7,11 @@ const imageToFolder = async (upload, setStatusMessage) => {
   data.append("skin_image", upload);
 
   try {
-    const response = await fetch('http://52.87.60.145:3000/uploadImage', {
+    const response = await fetch('http://52.87.60.145:3000/healthCheck', {
       method: 'POST',
       body: data,
       headers: {
+
         'Accept': 'application/json'
       }
     });
@@ -49,10 +51,12 @@ const imageToModel = async (upload, setStatusMessage) => {
       setStatusMessage("Image uploaded successfully!");
     } else {
       console.log("error response: ", responseMess);
-      setStatusMessage("Backend function called, image upload failed");
+      setStatusMessage("Backend function called, image upload failed.");
     }
   } catch (error) {
-    setStatusMessage("Couldn't contact backend to process image");
+    setStatusMessage("Couldn't contact backend to process image.");
+    console.error(error);
+
   }
 };
 
@@ -60,6 +64,7 @@ const imageToModel = async (upload, setStatusMessage) => {
 
 const Image = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+
 
   const [statusMessage, setStatusMessage] = useState("");
 
@@ -90,6 +95,7 @@ const Image = () => {
 
   const uploadImageButton = async () => {
     if (selectedImage) {
+
       const compressedImage = await compressInput(selectedImage); 
 
       imageToFolder(compressedImage, setStatusMessage); 
@@ -101,45 +107,50 @@ const Image = () => {
   };
 
   return (
+    <div className="upload-container">
+      <h2>Upload Image</h2>
 
-    <div>
-
-      <h1>Upload Image</h1>
 
       {selectedImage && (
         <div>
           <img
+            className="uploaded-image"
             width={"250px"}
             src={URL.createObjectURL(selectedImage)}
-            alt="Selected"
+            alt="Uploaded Preview"
+
           />
           <br /> <br />
-          <button onClick={() => setSelectedImage(null)}>Remove</button>
+          <button className="remove-button" onClick={() => setSelectedImage(null)}>
+            Remove
+          </button>
         </div>
       )}
 
       <br />
 
+      <label className="upload-label" htmlFor="file-upload">Choose Image</label>
+
       <input
+        id="file-upload"
         type="file"
         name="myImage"
         accept="image/*"
         onChange={(event) => {
           const imageUploaded = event.target.files[0];
           console.log(imageUploaded);
-
           if (imageUploaded) {
             setSelectedImage(imageUploaded);
-            setStatusMessage(""); 
+            setStatusMessage("");
           }
         }}
       />
 
       <br /> <br />
+      <button className="submit-button" onClick={uploadImageButton}>Submit</button>
 
-      <button onClick={uploadImageButton}>Submit</button>
+
       <br /> <br />
-
       {statusMessage && <p>{statusMessage}</p>}
     </div>
   );

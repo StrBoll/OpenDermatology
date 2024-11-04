@@ -1,28 +1,32 @@
-import { auth } from '../config/firebase-config';
-import { signInWithPopup, signOut } from 'firebase/auth';
-import React, { useState } from 'react';
-import { Route } from 'react-router-dom';
+import React from 'react';
+import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../config/firebase-config';
 import Image from '../components/Uploadimage';
+
+import '../styles/ResnStyle.css';  // Make sure this import points to the correct CSS file
+
+const Openderm = () => {
+  const navigate = useNavigate();
+
 import Input from '../components/firestore';
 
-export const Openderm = () => {
-  
-    const signout = async () => {
-        try {
-          await signOut(auth);
-          console.log("signed out");
-        } catch (err) {
-          console.error(err);
-        }
-      };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/login');
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
 
   return (
-    <div>
-    <h1>Openderm</h1>
-    <button onClick={signout}>Logout</button>
-    <Image></Image>
-    <Input/>
+    <div className="openderm-container">
+      <h1>Openderm Dashboard</h1>
+      <button className="logout-button" onClick={signout}>Logout</button>
+      <Image />
+
     </div>
   );
 };

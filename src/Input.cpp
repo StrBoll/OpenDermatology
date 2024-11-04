@@ -11,31 +11,31 @@ using namespace pqxx;
 Mat resizeWithPadding(Mat& image, int sizeWanted) {
     int oldHeight = image.rows;
     int oldWidth = image.cols;
-    
+
     float aspectRatio = (float)sizeWanted / max(oldWidth, oldHeight);
-    
+
     int newWidth = (int)(oldWidth * aspectRatio);
     int newHeight = (int)(oldHeight * aspectRatio);
-    
+
     Mat resizedImage;
     resize(image, resizedImage, Size(newWidth, newHeight));
-    
+
     Mat output = Mat::zeros(Size(sizeWanted, sizeWanted), CV_8UC3);
-    
+
     int xPad = (sizeWanted - newWidth) / 2;
     int yPad = (sizeWanted - newHeight) / 2;
-    
+
     resizedImage.copyTo(output(Rect(xPad, yPad, newWidth, newHeight)));
-    
+
     return output;
 }
 
 void normalizeImage(Mat& image) {
     Scalar mean = Scalar(0.485, 0.456, 0.406);
     Scalar stddeviation = Scalar(0.229, 0.224, 0.225);
-    
+
     image.convertTo(image, CV_32F, 1.0 / 255.0);
-    
+
     subtract(image, mean, image);
     divide(image, stddeviation, image);
 }

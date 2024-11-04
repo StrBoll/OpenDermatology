@@ -1,26 +1,13 @@
 import React from 'react';
-import LoginForm from '../components/loginForm';
-import { useNavigate } from 'react-router-dom';
+import LoginForm from './components/LoginForm'; // Ensure the path and filename are correct
 
-const LoginPage = () => {
-const navigate = useNavigate();
-
-
-const handleLogin = async (credentials) => {
-
-if (credentials.email === 'test@example.com' && credentials.password === 'password') {
-navigate('/dashboard');   
-    } else {
-alert('Invalid email or password');  
-  }
-};
-
+const LoginForm = () => {
   return (
     <div>
-<h2>Login</h2>
-<LoginForm />
+      <h2>Login Form</h2>
+      <button>Login</button>
     </div>
   );
 };
 
-export default LoginPage;
+export default LoginForm;

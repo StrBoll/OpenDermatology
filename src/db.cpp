@@ -82,7 +82,6 @@ vector<unsigned char> retrieveImage(){
     } catch (const exception &e){
         cerr << e.what() << endl;
         cout << "Could not retrieve byte data from database" << endl;
-        
         return {};
     }
 }
