@@ -42,7 +42,7 @@ void normalizeImage(Mat& image) {
 
 
 
-bool processImage(Mat& img) {
+bool processImage(Mat& img, bool database) {
 
     if (img.empty()) {
         cerr << "Image is empty" << endl;
@@ -57,7 +57,10 @@ bool processImage(Mat& img) {
         normalizeImage(resized_image);
         Mat grayscale;
         cvtColor(resized_image, grayscale, COLOR_BGR2GRAY);
-        sendToDatabase(grayscale);
+        if (database){
+            sendToDatabase(grayscale);
+        }
+        
     } 
     catch (const exception &e) {
         cerr << "error during processing" << endl;
@@ -87,4 +90,27 @@ bool sendToDatabase(Mat& img){
 
 }
 
+bool sendToFront(vector<unsigned char> image_byte_data){
+    try {
+    if (image_byte_data.empty()){
+        cerr << "Image byte data empty" << endl;
+        return false;
+    } else {
+        Mat image = imdecode(image_byte_data, IMREAD_COLOR);
 
+        if (image.empty()){
+            cerr << "Was unable to decode image byte data" << endl;
+            return false;
+        }
+        else {
+            //imshow("Retrieved from Database: ", image);
+            // waitKey(0);
+            cerr << "Was able to decode image" << endl;
+            return true;
+        }
+        return false;
+    }} catch (const exception &e){
+        cerr << e.what() << " Try block failed when sending byte data to opencv " << endl;
+        return false;
+    }
+}

@@ -6,6 +6,8 @@ import '../styles/ResnStyle.css';
 
 const LoginForm = () => {
   const [user, setUser] = useState(null);
+export const LoginForm = ({ onLogin }) => {
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,9 +31,21 @@ const LoginForm = () => {
   const signIn = async () => {
     try {
       const result = await signInWithPopup(auth, googleprovider);
-      const email = result.user.email;
-      if (!email.endsWith('@ufl.edu')) {
-        alert('Only UFL email addresses are allowed.');
+
+      await next(result.user.email, result.user);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const next = async (email, user) => {
+    try {
+      if (email.endsWith("@ufl.edu")) {
+        console.log("success");
+        const uid = user.uid; 
+        navigate("/openderm");
+      }
+      else {
+        alert('Invalid email or password');
         await signOut(auth);
       }
       // No need to navigate here, the onAuthStateChanged will handle it
@@ -52,7 +66,7 @@ const LoginForm = () => {
 
   return (
     <div className="login-container">
-      {user ? (
+      {user ? (x
         <div>
           <h2>Welcome</h2>
           <p>{user.email}</p>
@@ -64,6 +78,7 @@ const LoginForm = () => {
           <button onClick={signIn}>Sign in with UFL email</button>
         </div>
       )}
+
     </div>
   );
 };
