@@ -6,8 +6,6 @@ import '../styles/ResnStyle.css';
 
 const LoginForm = () => {
   const [user, setUser] = useState(null);
-export const LoginForm = ({ onLogin }) => {
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,24 +29,23 @@ export const LoginForm = ({ onLogin }) => {
   const signIn = async () => {
     try {
       const result = await signInWithPopup(auth, googleprovider);
-
       await next(result.user.email, result.user);
     } catch (err) {
       console.error(err);
     }
   };
+
   const next = async (email, user) => {
     try {
       if (email.endsWith("@ufl.edu")) {
         console.log("success");
         const uid = user.uid; 
         navigate("/openderm");
-      }
-      else {
+      } else {
         alert('Invalid email or password');
         await signOut(auth);
       }
-      // No need to navigate here, the onAuthStateChanged will handle it
+      // No need to navigate here; onAuthStateChanged will handle it
     } catch (err) {
       console.error('Sign-in error:', err);
       alert('Failed to sign in. Please try again.');
@@ -66,7 +63,7 @@ export const LoginForm = ({ onLogin }) => {
 
   return (
     <div className="login-container">
-      {user ? (x
+      {user ? (
         <div>
           <h2>Welcome</h2>
           <p>{user.email}</p>
@@ -78,7 +75,6 @@ export const LoginForm = ({ onLogin }) => {
           <button onClick={signIn}>Sign in with UFL email</button>
         </div>
       )}
-
     </div>
   );
 };

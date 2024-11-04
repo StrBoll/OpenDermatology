@@ -3,13 +3,13 @@ import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../config/firebase-config';
 import Image from '../components/Uploadimage';
+import Input from '../components/firestore';
 
 import '../styles/ResnStyle.css';  // Make sure this import points to the correct CSS file
 
 const Openderm = () => {
   const navigate = useNavigate();
 
-import Input from '../components/firestore';
 
 
   const handleLogout = async () => {
@@ -24,7 +24,7 @@ import Input from '../components/firestore';
   return (
     <div className="openderm-container">
       <h1>Openderm Dashboard</h1>
-      <button className="logout-button" onClick={signout}>Logout</button>
+      <button className="logout-button" onClick={handleLogout}>Logout</button>
       <Image />
 
     </div>
