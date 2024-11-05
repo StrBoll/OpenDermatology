@@ -3,32 +3,30 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from '../config/firebase-config';
 import { auth } from '../config/firebase-config';
 
+export const addInput = async (input, setInputs, fetchPost) => {
+    const user = auth.currentUser;
+    if (user) {
+        const uid = user.uid;
+        try {
+            const docRef = await addDoc(collection(db, `users/${uid}/inputs`), {
+                input: input,
+            });
+            console.log("Document written with ID: ", docRef.id);
+            setInputs((prevInputs) => [...prevInputs, { input, id: docRef.id }]);
+            fetchPost(); // Refresh the list after adding a new input
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
+    }
+};
+
 const Input = () => {
     const [input, setInput] = useState("");
     const [inputs, setInputs] = useState([]);
     const user = auth.currentUser;
    
     
-    const addInput = async (e) => {
-        e.preventDefault();  
-        if(user){
-            const uid = user.uid;
-            try {
-            
-                const docRef = await addDoc(collection(db, `users/${uid}/inputs`), {
-                       input: input,    
-               });
-               console.log("Document written with ID: ", docRef.id);
-               setInputs((prevInputs) => [...prevInputs, { input, id: docRef.id }]);
-               setInput("");
-   
-   
-             } catch (e) {
-               console.error("Error adding document: ", e);
-             }
-        }
-        
-    }
+
 
     const fetchPost = async () => {
         if(user){

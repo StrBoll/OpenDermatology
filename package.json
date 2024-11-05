@@ -1,6 +1,9 @@
 {
   "dependencies": {
     "browser-image-compression": "^2.0.2",
-    "firebase": "^10.14.1"
+    "firebase": "^10.14.1",
+    "gsap": "^3.12.5",
+    "three": "^0.170.0",
+    "vanta": "^0.5.24"
   }
 }
