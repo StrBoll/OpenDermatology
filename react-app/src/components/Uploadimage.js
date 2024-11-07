@@ -61,6 +61,14 @@ const imageToModel = async (upload, setStatusMessage) => {
   }
 };
 
+const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+};
 
 
 const Image = () => {
@@ -114,7 +122,8 @@ const Image = () => {
 
       imageToFolder(compressedImage, setStatusMessage); 
       imageToModel(compressedImage, setStatusMessage);
-      await addInput("workds ", setInputs, fetchPost);
+      const base64Image = await fileToBase64(compressedImage);
+      await addInput(base64Image, setInputs, fetchPost);
 
     } else {
       setStatusMessage("Please select an image before submitting.");
