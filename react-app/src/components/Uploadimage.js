@@ -71,6 +71,7 @@ const fileToBase64 = (file) => {
 };
 
 
+
 const Image = () => {
   
   const [selectedImage, setSelectedImage] = useState(null);
@@ -181,9 +182,9 @@ const Image = () => {
                 </h1>
                     {
                         inputs?.map((input,i)=>(
-                            <p key={i}>
-                                {input.input}
-                            </p>
+                          
+                          <img src={input.input}
+                          width="250px" />
                         ))
                     }
                 </div>
