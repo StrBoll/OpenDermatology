@@ -3,7 +3,7 @@ body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  display: flex;
+  overflow-y: auto;
   justify-content: center;
   align-items: center;
   font-family: 'Roboto', sans-serif;
@@ -11,7 +11,7 @@ body, html {
 
 /* Ensure the background of Vanta is behind the login form */
 #vanta-bg {
-  position: absolute;
+ 
   top: 0;
   left: 0;
   width: 100%;

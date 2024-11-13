@@ -1,0 +1,11 @@
+.todo-content {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px; 
+  }
+  
+  .todo-content div {
+    flex-shrink: 0; 
+    text-align: center;
+  }
+  

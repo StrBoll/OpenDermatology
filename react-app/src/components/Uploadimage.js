@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import imageCompression from 'browser-image-compression';
 import Input, { addInput } from "./firestore";  
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, serverTimestamp } from "firebase/firestore";
 import { db } from '../config/firebase-config';
 import { auth } from '../config/firebase-config';
-
+import './uploadimage.css'
 
 const imageToFolder = async (upload, setStatusMessage) => {
   const data = new FormData();
@@ -75,7 +75,7 @@ const fileToBase64 = (file) => {
 const Image = () => {
   
   const [selectedImage, setSelectedImage] = useState(null);
-
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [statusMessage, setStatusMessage] = useState("");
   const [inputs, setInputs] = useState([]); 
 
@@ -84,14 +84,19 @@ const Image = () => {
     if (user) {
       const uid = user.uid;
       const querySnapshot = await getDocs(collection(db, `users/${uid}/inputs`));
-      const newData = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
+      const newData = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          ...data,
+          id: doc.id,
+          timestamp: data.timestamp ? data.timestamp.toDate().toLocaleString() : "No timestamp",
+        };
+      });
       setInputs(newData);
       console.log("Fetched inputs:", newData);
     }
   };
+  
  
 
   const compressInput = async (file) => {
@@ -131,14 +136,18 @@ const Image = () => {
     }
   };
   useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 1000); 
     fetchPost(); 
+    return () => clearInterval(intervalId);
   }, []);
   
 
   return (
 
     <div>
-
+  
       <h1>Upload Image</h1>
 
       {selectedImage && (
@@ -176,18 +185,17 @@ const Image = () => {
       <br /> <br />
       
       {statusMessage && <p>{statusMessage}</p>}
+      <h1>History</h1>
       <div className="todo-content">
-      <h1 className="header">
-                    History
-                </h1>
-                    {
-                        inputs?.map((input,i)=>(
-                          
-                          <img src={input.input}
-                          width="250px" />
-                        ))
-                    }
-                </div>
+        <h1 className="header"></h1>
+        {inputs?.map((input, i) => (
+          <div key={i}>
+            <img src={input.input} width="250px" alt="Uploaded" />
+            <p>{input.timestamp}</p> 
+          </div>
+  ))}
+</div>
+
     </div>
   );
 };
