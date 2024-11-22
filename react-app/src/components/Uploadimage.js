@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import imageCompression from 'browser-image-compression';
 import Input, { addInput } from "./firestore";  
-import { collection, addDoc, getDocs, serverTimestamp } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from '../config/firebase-config';
 import { auth } from '../config/firebase-config';
-import './uploadimage.css'
+import './uploadimage.css';
 
-const imageToFolder = async (upload, setStatusMessage) => {
+const imageToFolder = async (upload) => {
   const data = new FormData();
   data.append("skin_image", upload);
 
@@ -23,18 +23,17 @@ const imageToFolder = async (upload, setStatusMessage) => {
 
     if (response.ok) {
       console.log("response ok message: ", responseMess);
-      setStatusMessage("Image uploaded successfully!");
+      return responseMess;
     } else {
       console.log("error response: ", responseMess);
-      setStatusMessage("Backend function called, image upload failed");
+      return responseMess;
     }
   } catch (error) {
-    setStatusMessage("Couldn't contact backend to process image");
+    return "Couldn't contact backend to process image";
   }
 };
 
-
-const imageToModel = async (upload, setStatusMessage) => {
+const imageToModel = async (upload) => {
   const data = new FormData();
   data.append("skin_image", upload);
 
@@ -47,17 +46,17 @@ const imageToModel = async (upload, setStatusMessage) => {
       }
     });
 
-    const responseMess = await response.text();
+    const responseMess = await response.json(); // Parse JSON response
 
     if (response.ok) {
       console.log("response ok message: ", responseMess);
-      setStatusMessage("Image uploaded successfully!");
+      return responseMess; // Return the parsed JSON object
     } else {
       console.log("error response: ", responseMess);
-      setStatusMessage("Backend function called, image upload failed");
+      return responseMess;
     }
   } catch (error) {
-    setStatusMessage("Couldn't contact backend to process image");
+    return { error: "Couldn't contact backend to process image" };
   }
 };
 
@@ -70,10 +69,7 @@ const fileToBase64 = (file) => {
   });
 };
 
-
-
 const Image = () => {
-  
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [statusMessage, setStatusMessage] = useState("");
@@ -96,45 +92,56 @@ const Image = () => {
       console.log("Fetched inputs:", newData);
     }
   };
-  
- 
 
   const compressInput = async (file) => {
-    if (file.size > 1024 * 1024) { 
+    if (file.size > 1024 * 1024) { // If file size > 1MB
       const requirements = {
         maxSizeMB: 1, 
         maxWidthOrHeight: 1920, 
         useWebWorker: true,
-
       };
-
 
       try {
         const compressedImage = await imageCompression(file, requirements);
         return compressedImage;
-
       } catch (error) {
         console.log("Image above 1MB, unable to compress in good quality, ", error);
-        return file; 
-
+        return file; // Return original file if compression fails
       }
     }
-    return file; 
+    return file; // Return original file if no compression needed
   };
 
   const uploadImageButton = async () => {
     if (selectedImage) {
       const compressedImage = await compressInput(selectedImage); 
 
-      imageToFolder(compressedImage, setStatusMessage); 
-      imageToModel(compressedImage, setStatusMessage);
+      const folderResponse = await imageToFolder(compressedImage);
+      const modelResponse = await imageToModel(compressedImage);
       const base64Image = await fileToBase64(compressedImage);
       await addInput(base64Image, setInputs, fetchPost);
 
+      // Process modelResponse
+      let modelResponseMessage = '';
+
+      if (modelResponse.error) {
+        modelResponseMessage = modelResponse.error;
+      } else if (modelResponse["Top 3 Predictions"]) {
+        const predictions = modelResponse["Top 3 Predictions"];
+        modelResponseMessage = 'Top 3 Predictions:\n';
+        for (const [disease, probability] of Object.entries(predictions)) {
+          modelResponseMessage += `${disease}: ${(probability * 100).toFixed(2)}%\n`;
+        }
+      } else {
+        modelResponseMessage = 'Unexpected response from model.';
+      }
+
+      setStatusMessage(`Folder Response: ${folderResponse}\n\nModel Response:\n${modelResponseMessage}`);
     } else {
       setStatusMessage("Please select an image before submitting.");
     }
   };
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentDate(new Date());
@@ -142,12 +149,9 @@ const Image = () => {
     fetchPost(); 
     return () => clearInterval(intervalId);
   }, []);
-  
 
   return (
-
     <div>
-  
       <h1>Upload Image</h1>
 
       {selectedImage && (
@@ -158,33 +162,45 @@ const Image = () => {
             alt="Selected"
           />
           <br /> <br />
-          <button onClick={() => setSelectedImage(null)}>Remove</button>
+          <button className="logout-button" onClick={() => setSelectedImage(null)}>Remove</button>
         </div>
       )}
 
       <br />
 
-      <input
-        type="file"
-        name="myImage"
-        accept="image/*"
-        onChange={(event) => {
-          const imageUploaded = event.target.files[0];
-          console.log(imageUploaded);
+      <div className="file-input-wrapper">
+        <label className="upload-label">
+          Choose File
+          <input
+            type="file"
+            name="myImage"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={(event) => {
+              const imageUploaded = event.target.files[0];
+              console.log(imageUploaded);
 
-          if (imageUploaded) {
-            setSelectedImage(imageUploaded);
-            setStatusMessage(""); 
-          }
-        }}
-      />
+              if (imageUploaded) {
+                setSelectedImage(imageUploaded);
+                setStatusMessage(""); 
+              }
+            }}
+          />
+        </label>
+        <span className="file-name">
+          {selectedImage ? selectedImage.name : "No file chosen"}
+        </span>
+      </div>
 
       <br /> <br />
 
-      <button onClick={uploadImageButton}>Submit</button>
+      <button className="submit-button" onClick={uploadImageButton}>Submit</button>
+
       <br /> <br />
-      
-      {statusMessage && <p>{statusMessage}</p>}
+
+      {/* Display status message */}
+      {statusMessage && <pre>{statusMessage}</pre>}
+
       <h1>History</h1>
       <div className="todo-content">
         <h1 className="header"></h1>
@@ -193,12 +209,10 @@ const Image = () => {
             <img src={input.input} width="250px" alt="Uploaded" />
             <p>{input.timestamp}</p> 
           </div>
-  ))}
-</div>
-
+        ))}
+      </div>
     </div>
   );
 };
-
 
 export default Image;

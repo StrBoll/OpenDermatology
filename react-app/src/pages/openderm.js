@@ -5,7 +5,7 @@ import { auth } from '../config/firebase-config';
 import Image from '../components/Uploadimage';
 import Input from '../components/firestore';
 
-import '../styles/ResnStyle.css';  // Make sure this import points to the correct CSS file
+import '../styles/ResnStyle.css';  
 
 const Openderm = () => {
   const navigate = useNavigate();

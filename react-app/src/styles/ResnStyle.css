@@ -25,8 +25,10 @@ body, html {
   letter-spacing: 0.2em;
 }
 
-/* Logout button styling */
-.logout-button {
+/* Common button styling */
+.logout-button,
+.upload-label,
+.submit-button {
   background: none;
   border: 2px solid white;
   color: white;
@@ -36,10 +38,12 @@ body, html {
   letter-spacing: 0.1em;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-bottom: 2rem; /* Adds space between logout and the image upload */
+  margin-bottom: 2rem;
 }
 
-.logout-button:hover {
+.logout-button:hover,
+.upload-label:hover,
+.submit-button:hover {
   background: white;
   color: #23153c;
 }
@@ -56,45 +60,10 @@ body, html {
   color: white;
 }
 
-.upload-label {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  transition: background-color 0.3s ease;
-}
-
-.upload-label:hover {
-  background-color: #0056b3;
-}
-
 .upload-container input[type="file"] {
   display: none; /* Hide the default file input */
 }
 
-.submit-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.submit-button:hover {
-  background-color: #0056b3;
-}
-/* styles/ResnStyle.css */
-.login-container,
-.openderm-container,
-.upload-container {
-  position: relative;
-  z-index: 1;
-}
 /* Login container */
 .login-container {
   position: absolute;
@@ -105,7 +74,7 @@ body, html {
   color: white;
   z-index: 10;
   padding: 30px;
-  background-color: rgba(0, 0, 0, 0.7);  /* Semi-transparent background for emphasis */
+  background-color: rgba(0, 0, 0, 0.7);
   border-radius: 10px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
   max-width: 400px;

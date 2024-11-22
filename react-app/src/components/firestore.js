@@ -74,14 +74,14 @@ const Input = () => {
                     </div>
 
                     <div className="btn-container">
-                        <button
-                            type="submit"
-                            className="btn"
-                            onClick={addInput}
-                        >
-                            Submit
-                        </button>
-                    </div>
+    <button
+        type="submit"
+        className="submit-button"
+        onClick={addInput}
+    >
+        Submit
+    </button>
+</div>
 
                 </div>
 
