@@ -1,63 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, googleprovider } from '../config/firebase-config';
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithPopup, signOut } from 'firebase/auth';
 import '../styles/ResnStyle.css';
 
 const LoginForm = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        if (!currentUser.email.endsWith('@ufl.edu')) {
-          alert('Invalid email domain. Only @ufl.edu is allowed.');
-          signOut(auth);
-        } else {
-          navigate('/openderm');
-        }
-      } else {
-        setUser(null);
+  // Sign the user out on initial load to enforce re-login
+  React.useEffect(() => {
+    const logoutOnLoad = async () => {
+      try {
+        await signOut(auth); // Sign out any existing user
+        setUser(null); // Clear the user state
+      } catch (err) {
+        console.error('Error signing out on load:', err);
       }
-    });
+    };
 
-    return () => unsubscribe();
-  }, [navigate]);
+    logoutOnLoad();
+  }, []);
 
   const signIn = async () => {
     try {
       const result = await signInWithPopup(auth, googleprovider);
-      await next(result.user.email, result.user);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+      const email = result.user.email;
 
-  const next = async (email, user) => {
-    try {
       if (email.endsWith("@ufl.edu")) {
-        console.log("success");
-        const uid = user.uid; 
+        setUser(result.user);
+        console.log("Login successful");
         navigate("/openderm");
       } else {
-        alert('Invalid email or password');
+        alert("Invalid email domain. Only @ufl.edu is allowed.");
         await signOut(auth);
       }
-      // No need to navigate here; onAuthStateChanged will handle it
     } catch (err) {
-      console.error('Sign-in error:', err);
-      alert('Failed to sign in. Please try again.');
+      console.error("Sign-in error:", err);
     }
   };
 
   const signout = async () => {
     try {
       await signOut(auth);
-      console.log('User signed out');
+      setUser(null);
+      console.log("User signed out");
     } catch (err) {
-      console.error('Sign-out error:', err);
+      console.error("Sign-out error:", err);
     }
   };
 
