@@ -77,20 +77,16 @@ const Image = () => {
 
   const fetchPost = async () => {
     const user = auth.currentUser;
-    if (user) {
       const uid = user.uid;
       const querySnapshot = await getDocs(collection(db, `users/${uid}/inputs`));
       const newData = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
+
         return {
-          ...data,
-          id: doc.id,
-          timestamp: data.timestamp ? data.timestamp.toDate().toLocaleString() : "No timestamp",
+          ...doc.data(),
+          timestamp: doc.data().timestamp.toDate().toLocaleString(),
         };
       });
       setInputs(newData);
-      console.log("Fetched inputs:", newData);
-    }
   };
 
   const compressInput = async (file) => {
@@ -202,7 +198,7 @@ const Image = () => {
       {statusMessage && <pre>{statusMessage}</pre>}
 
       <h1>History</h1>
-      <div className="todo-content">
+      <div className="history">
         <h1 className="header"></h1>
         {inputs?.map((input, i) => (
           <div key={i}>
@@ -212,7 +208,7 @@ const Image = () => {
           </div>
         ))}
       </div>
-    </div>
+      </div>
   );
 };
 
