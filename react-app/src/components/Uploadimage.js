@@ -206,8 +206,9 @@ const Image = () => {
         <h1 className="header"></h1>
         {inputs?.map((input, i) => (
           <div key={i}>
-            <img src={input.input} width="250px" alt="Uploaded" />
             <p>{input.timestamp}</p> 
+            <img src={input.input} width="250px" alt="Uploaded" />
+            
           </div>
         ))}
       </div>
